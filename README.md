@@ -1,4 +1,4 @@
-# injs
+# 云顶之弈--阵容模拟器
 
 ## Project setup
 ```
