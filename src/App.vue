@@ -7,7 +7,7 @@
       :origins="originsS3"
       :teams="teamsS3"
       :state="states"
-      imgfolder="picture_s3/"
+      img-folder="S3/"
     />
     <MyPage
       v-else
@@ -16,21 +16,19 @@
       :origins="originsS2"
       :teams="teamsS2"
       :state="states"
-      imgfolder="picture_s2/"
+      img-folder="S2/"
     />
   </div>
 </template>
 
 <script>
-// 2 github
-// 3 localStorage
-// vue 风格指南
-// 不用class show，用compute啊 然后改img的active 算了能用就行
+// button 响应式简单点 我佛了
+// 需要自定义prompt alert
+// hover th button 不太实用
 //
 // span滑动动画
 // 服务端渲染
 // @click.native
-// h2数据库
 import MyPage from './components/MyPage.vue';
 
 export default {
@@ -53,20 +51,41 @@ export default {
       },
     };
   },
+  methods: {
+    saveTeamToLocal() {
+      localStorage.teamsS2 = JSON.stringify(this.teamsS2);
+      localStorage.teamsS3 = JSON.stringify(this.teamsS3);
+      // console.log('存入localStorage!');
+    },
+  },
   created() {
-    const hostname = 'http://39.105.135.195/';
+    window.addEventListener('beforeunload', () => this.saveTeamToLocal());
+    const hostname = 'http://39.105.135.195';
+    // const hostname = 'http://127.0.0.1:8080';
     fetch(`${hostname}/data/championsS2`)
       .then((res) => res.json())
       .then((res) => (this.championsS2 = res));
     fetch(`${hostname}/data/championsS3`)
       .then((res) => res.json())
       .then((res) => (this.championsS3 = res));
-    fetch(`${hostname}/data/teamsS2`)
-      .then((res) => res.json())
-      .then((res) => (this.teamsS2 = res));
-    fetch(`${hostname}/data/teamsS3`)
-      .then((res) => res.json())
-      .then((res) => (this.teamsS3 = res));
+    if (localStorage.getItem('teamsS2')) {
+      // console.log('存在teamsS2');
+      this.teamsS2 = JSON.parse(localStorage.teamsS2);
+    } else {
+      // console.log('不存在teamsS2');
+      fetch(`${hostname}/data/teamsS2`)
+        .then((res) => res.json())
+        .then((res) => { this.teamsS2 = res; });
+    }
+    if (localStorage.getItem('teamsS3')) {
+      // console.log('存在teamsS3');
+      this.teamsS3 = JSON.parse(localStorage.teamsS3);
+    } else {
+      // console.log('不存在teamsS3');
+      fetch(`${hostname}/data/teamsS3`)
+        .then((res) => res.json())
+        .then((res) => { this.teamsS3 = res; });
+    }
 
     fetch(`${hostname}/data/originsS2`)
       .then((res) => res.json())
@@ -81,6 +100,13 @@ export default {
     fetch(`${hostname}/data/classesS3`)
       .then((res) => res.json())
       .then((res) => (this.classesS3 = res));
+  },
+  // beforeMount() {
+  //   this.teamsS2.forEach((team) => (team.active = false)); // 为何team有用，champion没用
+  //   this.teamsS3.forEach((team) => (team.active = false));
+  // },
+  destroyed() {
+    window.removeEventListener('beforeunload', () => this.saveTeamToLocal());
   },
 };
 </script>

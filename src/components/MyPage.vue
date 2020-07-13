@@ -1,23 +1,28 @@
 <template>
   <div>
-    <MyButton :champions="champions" :teams="teams" :states="state" />
-    <MyTable :champions="champions" :origins="origins" :classes="classes" :imgfolder="imgfolder" />
+    <PageHead :champions="champions"
+              :teams="teams"
+              :states="state" />
+    <PageTable :champions="champions"
+               :origins="origins"
+               :classes="classes"
+               :img-folder="imgFolder" />
   </div>
 </template>
 
 <script>
-import MyButton from './MyButton.vue';
-import MyTable from './MyTable.vue';
+import PageHead from './PageHead.vue';
+import PageTable from './PageTable.vue';
 
 export default {
   name: 'MyPage',
-  components: { MyButton, MyTable },
+  components: { PageHead, PageTable },
   props: {
     champions: Array,
     classes: Array,
     origins: Array,
     teams: Array,
-    imgfolder: String,
+    imgFolder: String,
     state: Object,
   },
 };
